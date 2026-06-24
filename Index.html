@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <base target="_top">
+
+  <style>
+
+    body{
+      margin:0;
+      padding:0;
+      background:#f4f7fb;
+      font-family:Arial;
+    }
+
+    .container{
+
+      width:95%;
+      max-width:600px;
+
+      margin:40px auto;
+
+      background:white;
+
+      padding:30px;
+
+      border-radius:15px;
+
+      box-shadow:0 0 20px rgba(0,0,0,.2);
+
+    }
+
+    h1{
+
+      color:#0066cc;
+
+      text-align:center;
+
+    }
+
+    h2{
+
+      text-align:center;
+
+      color:#444;
+
+    }
+
+    input{
+
+      width:100%;
+
+      padding:12px;
+
+      font-size:18px;
+
+      border-radius:8px;
+
+      border:1px solid #ccc;
+
+    }
+
+    textarea{
+
+      width:100%;
+
+      height:120px;
+
+      border-radius:8px;
+
+      border:1px solid #ccc;
+
+      padding:10px;
+
+      font-size:16px;
+
+    }
+
+    button{
+
+      width:100%;
+
+      background:#0066cc;
+
+      color:white;
+
+      border:none;
+
+      padding:15px;
+
+      border-radius:8px;
+
+      font-size:18px;
+
+      cursor:pointer;
+
+    }
+
+    button:hover{
+
+      background:#004b99;
+
+    }
+
+    .emoji{
+
+      font-size:55px;
+
+      cursor:pointer;
+
+      margin:8px;
+
+      transition:.3s;
+
+    }
+
+    .emoji:hover{
+
+      transform:scale(1.3);
+
+    }
+
+    .selected{
+
+      transform:scale(1.5);
+
+    }
+
+    .hide{
+
+      display:none;
+
+    }
+
+    .msg{
+
+      background:#f3f8ff;
+
+      padding:15px;
+
+      border-left:5px solid #0066cc;
+
+      margin-top:20px;
+
+      border-radius:8px;
+
+      font-size:15px;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🏢 JAI KAPEES INFRACON</h1>
+
+<h2>Customer Feedback</h2>
+
+<div id="step1">
+
+<label><b>Enter Order Number</b></label>
+
+<input id="orderNo">
+
+<br><br>
+
+<button onclick="verifyOrder()">Continue</button>
+
+</div>
+
+<div id="step2" class="hide">
+
+<h2 id="customer"></h2>
+
+<h3>Select Your Rating</h3>
+
+<center>
+
+<span class="emoji" onclick="selectEmoji(this,'😡')">😡</span>
+
+<span class="emoji" onclick="selectEmoji(this,'☹️')">☹️</span>
+
+<span class="emoji" onclick="selectEmoji(this,'😐')">😐</span>
+
+<span class="emoji" onclick="selectEmoji(this,'😊')">😊</span>
+
+<span class="emoji" onclick="selectEmoji(this,'🤩')">🤩</span>
+
+</center>
+
+<br>
+
+<label><b>1. How was your experience with our service?</b></label>
+
+<textarea id="experience"></textarea>
+
+<br><br>
+
+<label><b>2. What do you think we can improve?</b></label>
+
+<textarea id="suggestion"></textarea>
+
+<div class="msg">
+
+💡 <b>Your valuable suggestions help us improve our products and services.</b>
+
+<br><br>
+
+🏆 The <b>Top 3 most valuable suggestions</b> every month will receive exciting rewards.
+
+</div>
+
+<br>
+
+<button onclick="submitFeedback()">Submit Feedback</button>
+
+</div>
+
+</div>
+
+<script>
+
+let rating="";
+
+let orderNo="";
+
+function verifyOrder(){
+
+orderNo=document.getElementById("orderNo").value;
+
+if(orderNo==""){
+
+alert("Enter Order Number");
+
+return;
+
+}
+
+google.script.run.withSuccessHandler(function(res){
+
+if(res.status){
+
+document.getElementById("step1").classList.add("hide");
+
+document.getElementById("step2").classList.remove("hide");
+
+document.getElementById("customer").innerHTML="Hello "+res.customer+" 👋";
+
+}else{
+
+alert("Invalid Order Number");
+
+}
+
+}).getCustomer(orderNo);
+
+}
+
+function selectEmoji(ele,r){
+
+rating=r;
+
+document.querySelectorAll(".emoji").forEach(x=>x.classList.remove("selected"));
+
+ele.classList.add("selected");
+
+}
+
+function submitFeedback(){
+
+if(rating==""){
+
+alert("Please select rating.");
+
+return;
+
+}
+
+google.script.run.withSuccessHandler(function(){
+
+document.body.innerHTML="<center><br><br><h1>🎉 Thank You!</h1><h2>Your feedback has been submitted successfully.</h2><h3>❤️ Team JAI KAPEES INFRACON</h3></center>";
+
+}).saveFeedback({
+
+orderNo:orderNo,
+
+rating:rating,
+
+experience:document.getElementById("experience").value,
+
+suggestion:document.getElementById("suggestion").value
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>
