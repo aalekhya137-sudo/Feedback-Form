@@ -1,0 +1,123 @@
+<script>
+
+let rating = "";
+let orderNo = "";
+
+// Verify the Order Number
+function verifyOrder() {
+
+  orderNo = document.getElementById("orderNo").value.trim();
+
+  if (orderNo == "") {
+    alert("Please enter your Order Number.");
+    return;
+  }
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+
+      if (res.status) {
+
+        document.getElementById("step1").classList.add("hide");
+        document.getElementById("step2").classList.remove("hide");
+
+        document.getElementById("customer").innerHTML =
+          "Welcome, <b>" + res.customer + "</b> 👋";
+
+      } else {
+
+        alert("❌ Invalid Order Number.");
+
+      }
+
+    })
+    .getCustomer(orderNo);
+
+}
+
+
+// Select Emoji
+function selectEmoji(element, emoji) {
+
+  rating = emoji;
+
+  let emojis = document.querySelectorAll(".emoji");
+
+  emojis.forEach(function(e) {
+    e.classList.remove("selected");
+  });
+
+  element.classList.add("selected");
+
+}
+
+
+// Submit Feedback
+function submitFeedback() {
+
+  if (rating == "") {
+
+    alert("Please select a rating.");
+
+    return;
+
+  }
+
+  let experience =
+    document.getElementById("experience").value.trim();
+
+  let suggestion =
+    document.getElementById("suggestion").value.trim();
+
+
+  google.script.run
+    .withSuccessHandler(function(success) {
+
+      if (success) {
+
+        document.body.innerHTML = `
+
+<div class="thankyou">
+
+<h1>🎉 Thank You!</h1>
+
+<h2>Your feedback has been submitted successfully.</h2>
+
+<p style="margin-top:20px;font-size:18px;color:#555;">
+
+We sincerely appreciate your valuable feedback.
+
+</p>
+
+<p style="margin-top:10px;">
+
+❤️ Team <b>JAI KAPEES INFRACON</b>
+
+</p>
+
+</div>
+
+`;
+
+      } else {
+
+        alert("Unable to save your feedback.");
+
+      }
+
+    })
+    .saveFeedback({
+
+      orderNo: orderNo,
+
+      rating: rating,
+
+      experience: experience,
+
+      suggestion: suggestion
+
+    });
+
+}
+
+</script>
